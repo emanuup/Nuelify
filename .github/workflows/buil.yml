@@ -1,0 +1,35 @@
+name: Build Windows executable
+
+# Se ejecuta automáticamente en cada push a main, o manualmente desde la pestaña Actions
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Construir el ejecutable
+        # --paths src: para que PyInstaller encuentre los módulos dentro de src/
+        run: pyinstaller --onefile --windowed --paths src --name nuelify main.py
+
+      - name: Subir el ejecutable como artefacto descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuelify-windows
+          path: dist/nuelify.exe

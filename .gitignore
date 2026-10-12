@@ -1,0 +1,23 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Cache de pytest
+.pytest_cache/
+
+# Empaquetado (PyInstaller)
+build/
+dist/
+*.spec
+
+# Configuración del editor 
+.vscode/
+
+# Congifuraciones y temas de obsidian 
+.obsidian/
