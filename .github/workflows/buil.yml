@@ -1,10 +1,15 @@
 name: Build Windows executable
 
-# Se ejecuta automáticamente en cada push a main, o manualmente desde la pestaña Actions
+# Se ejecuta en cada push a main, al subir una etiqueta (v2.1, v3.0...)
+# o manualmente desde la pestaña Actions
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
+
+permissions:
+  contents: write   # necesario para publicar los archivos en Releases
 
 jobs:
   build:
@@ -24,12 +29,33 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Construir el ejecutable
-        # --paths src: para que PyInstaller encuentre los módulos dentro de src/
-        run: pyinstaller --onefile --windowed --paths src --name nuelify main.py
+      # --paths src: para que PyInstaller encuentre los módulos dentro de src/
+      # --add-data: lleva la carpeta web/ (HTML, CSS, JS) dentro del .exe
+      - name: Construir el ejecutable (sin consola)
+        run: >
+          pyinstaller --noconfirm --onefile --windowed --paths src
+          --add-data "src/presentation/web;presentation/web"
+          --name nuelify main.py
 
-      - name: Subir el ejecutable como artefacto descargable
+      # Igual, pero con consola: si algo falla, ahí se ve el error
+      - name: Construir la versión con consola (para ver errores)
+        run: >
+          pyinstaller --noconfirm --onefile --paths src
+          --add-data "src/presentation/web;presentation/web"
+          --name nuelify-consola main.py
+
+      - name: Subir los ejecutables como artefacto descargable
         uses: actions/upload-artifact@v4
         with:
           name: nuelify-windows
-          path: dist/nuelify.exe
+          path: |
+            dist/nuelify.exe
+            dist/nuelify-consola.exe
+
+      - name: Publicar en Releases (solo con etiqueta)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/nuelify.exe
+            dist/nuelify-consola.exe
