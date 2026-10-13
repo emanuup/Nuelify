@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nuelify</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <main class="escena">
+   <div class="caja" id="caja"><div class="lienzo" id="lienzo">
+
+    <!-- ================= REPRODUCTOR ================= -->
+    <section class="ventana" aria-label="Reproductor">
+
+      <header class="titulo pywebview-drag-region">
+        <span class="btn-esquina" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path class="trazo" d="M2 3.5h12v9H2z"/><path class="trazo" d="M2.5 4l5.5 4.5L13.5 4"/></svg>
+        </span>
+        <div class="titulo-centro"><span>Nuelify</span></div>
+        <div class="titulo-derecha">
+          <span class="btn-esquina" aria-hidden="true">
+            <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-4 3-5 6-5s6 1 6 5z"/></svg>
+          </span>
+          <span class="btn-esquina" aria-hidden="true">
+            <svg viewBox="0 0 16 16"><path d="M4.5 12.5a3 3 0 0 1-.3-6 4 4 0 0 1 7.6-.9 3.5 3.5 0 0 1 .2 6.9z"/></svg>
+          </span>
+          <button class="btn-esquina" id="btn-cerrar" type="button" aria-label="Cerrar">
+            <svg viewBox="0 0 16 16"><path class="trazo grueso" d="M3 3l10 10M13 3L3 13"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="cuerpo">
+
+        <div class="fila-superior">
+          <div class="caratula">
+            <img id="img-caratula" alt="Carátula del álbum" hidden>
+            <div class="caratula-vacia" id="caratula-vacia" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M6 2.5v8.2a2.4 2.4 0 1 0 1.6 2.3V5.6l5-1.2v4.3a2.4 2.4 0 1 0 1.6 2.3V2z"/></svg>
+            </div>
+          </div>
+
+          <div class="panel-derecho">
+            <div class="ahora-suena"><span id="ahora-suena">ahora suena: nada</span></div>
+
+            <div class="fila-botones">
+              <button class="btn-plano" id="btn-navegar" type="button">Navegar</button>
+              <button class="btn-plano" id="btn-ayuda" type="button">Ayuda</button>
+              <button class="btn-plano" id="btn-biblioteca" type="button">Biblioteca</button>
+            </div>
+
+            <div class="fila-volumen">
+              <svg class="icono-volumen" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z"/><path class="trazo" d="M11.5 5.5a3.5 3.5 0 0 1 0 5"/></svg>
+              <div class="barra" id="volumen" role="slider" aria-label="Volumen" aria-valuemin="0" aria-valuemax="100" title="Volumen">
+                <div class="relleno"></div><div class="asa"></div>
+              </div>
+              <button class="btn-mini" type="button" disabled title="Próximamente">EQ</button>
+              <button class="btn-mini" id="btn-pl" type="button" title="Mostrar la lista">PL</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="barra progreso" id="progreso" role="progressbar" aria-label="Progreso de la canción">
+          <div class="relleno"></div><div class="asa"></div>
+        </div>
+
+        <div class="transporte">
+          <button class="btn-trans" id="btn-anterior" type="button" aria-label="Anterior">
+            <svg viewBox="0 0 16 16"><path d="M8 3v10L1 8zM15 3v10L8 8z"/></svg>
+          </button>
+          <button class="btn-trans" id="btn-play" type="button" aria-label="Reproducir">
+            <svg viewBox="0 0 16 16"><path d="M4 2v12l10-6z"/></svg>
+          </button>
+          <button class="btn-trans" id="btn-pausa" type="button" aria-label="Pausa">
+            <svg viewBox="0 0 16 16"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>
+          </button>
+          <button class="btn-trans" id="btn-stop" type="button" aria-label="Detener">
+            <svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10"/></svg>
+          </button>
+          <button class="btn-trans" id="btn-siguiente" type="button" aria-label="Siguiente">
+            <svg viewBox="0 0 16 16"><path d="M1 3v10l7-5zM8 3v10l7-5z"/></svg>
+          </button>
+
+          <button class="btn-trans" id="btn-subir" type="button" aria-label="Mostrar u ocultar la biblioteca">
+            <svg viewBox="0 0 16 16"><path class="trazo grueso" d="M2.5 11l5.5-6.5L13.5 11"/></svg>
+          </button>
+
+          <span class="separador"></span>
+
+          <button class="btn-trans texto" type="button" disabled title="Próximamente">Shuffle</button>
+          <button class="btn-trans texto" type="button" disabled title="Próximamente">Rep</button>
+        </div>
+      </div>
+
+      <!-- Barra de estado: texto a la izquierda, tiempo a la derecha -->
+      <footer class="estado">
+        <span id="estado-texto" class="estado-texto">Listo</span>
+        <span id="tiempo" class="tiempo">0:00 / 0:00</span>
+      </footer>
+    </section>
+
+    <!-- ================= BIBLIOTECA ================= -->
+    <section class="ventana" id="biblioteca" aria-label="Biblioteca" hidden>
+      <header class="titulo">
+        <span class="btn-esquina" aria-hidden="true">
+          <svg viewBox="0 0 16 16"><path d="M6 2.5v8.2a2.4 2.4 0 1 0 1.6 2.3V5.6l5-1.2v4.3a2.4 2.4 0 1 0 1.6 2.3V2z"/></svg>
+        </span>
+        <div class="titulo-centro"><span>Biblioteca</span></div>
+        <button class="btn-esquina" id="btn-cerrar-lista" type="button" aria-label="Cerrar la biblioteca">
+          <svg viewBox="0 0 16 16"><path class="trazo grueso" d="M3 3l10 10M13 3L3 13"/></svg>
+        </button>
+      </header>
+
+      <div class="cuerpo">
+        <input class="buscar" id="buscar" type="text" placeholder="buscar por título" autocomplete="off" spellcheck="false">
+        <ul id="canciones"></ul>
+      </div>
+    </section>
+
+   </div></div>
+  </main>
+
+  <!-- ================= AYUDA ================= -->
+  <div class="modal" id="ayuda" hidden>
+    <section class="ventana chica" role="dialog" aria-label="Ayuda">
+      <header class="titulo">
+        <span class="btn-esquina" aria-hidden="true"></span>
+        <div class="titulo-centro"><span>Ayuda</span></div>
+        <button class="btn-esquina" id="btn-cerrar-ayuda" type="button" aria-label="Cerrar la ayuda">
+          <svg viewBox="0 0 16 16"><path class="trazo grueso" d="M3 3l10 10M13 3L3 13"/></svg>
+        </button>
+      </header>
+      <div class="cuerpo texto-ayuda">
+        <p><b>Navegar</b> elige una carpeta con música.</p>
+        <p><b>Biblioteca</b> busca canciones. Doble clic reproduce.</p>
+        <p>Arrastra la barra con el parlante para cambiar el volumen.</p>
+        <p>Si una canción no trae carátula, pon un <b>cover.jpg</b> en su carpeta.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

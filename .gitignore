@@ -21,3 +21,6 @@ dist/
 
 # Congifuraciones y temas de obsidian 
 .obsidian/
+
+#Biblioteca de mi equipo personal 
+data/biblioteca.json
