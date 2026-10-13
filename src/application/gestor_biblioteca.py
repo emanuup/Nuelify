@@ -4,12 +4,25 @@ dominio con la lectura de archivos y la persistencia, para ofrecer
 operaciones de alto nivel como "cargar toda la música de una carpeta"
 o "buscar una canción por nombre".
 """
-
+import os
+import sys
+from pathlib import Path
 from domain.tabla_hash import TablaHash
 from infrastructure.lector_metadatos import escanear_carpeta
 from infrastructure.gestor_persistencia import guardar, cargar
 
-RUTA_BIBLIOTECA_GUARDADA = "data/biblioteca.json"
+def _carpeta_datos():
+    """Carpeta del usuario donde vive la biblioteca guardada."""
+    if sys.platform.startswith("win"):
+        base = Path(os.environ.get("APPDATA", Path.home()))
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    carpeta = base / "Nuelify"
+    carpeta.mkdir(parents=True, exist_ok=True)
+    return carpeta
+
+
+RUTA_BIBLIOTECA_GUARDADA = str(_carpeta_datos() / "biblioteca.json")
 
 
 class GestorBiblioteca:
