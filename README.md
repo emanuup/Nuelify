@@ -4,7 +4,11 @@
 
 ## Resumen del proyecto
 
-Aplicación de escritorio en Python que organiza, busca y reproduce música local, construida para demostrar la aplicación práctica de estructuras de datos implementadas manualmente. Corre igual en Linux (desarrollo) y Windows (evaluación del profesor). Interfaz en Tkinter, estética minimalista de terminal (fondo casi negro, acento único en cobre apagado, tipografía monoespaciada).
+Aplicación de escritorio en Python, html, CSS y JS que organiza, busca y reproduce música local, construida para demostrar la aplicación práctica de estructuras de datos implementadas manualmente. Corre igual en Linux (desarrollo) y Windows, diseño retro de mi gusto como si fuera de los años 90s.
+
+## Diseño de mi proyecto 
+![Captura de pantalla](img/Nuelify.png)
+
 
 ## Estado del proyecto
 
@@ -13,15 +17,15 @@ Aplicación de escritorio en Python que organiza, busca y reproduce música loca
 | Dominio | Lista doblemente enlazada, cola, pila, tabla hash | ✅ Completa (21 tests) |
 | Infraestructura | Lector de metadatos (mutagen), persistencia JSON, reproductor de audio (pygame-ce) | ✅ Completa (10 tests) |
 | Aplicación | GestorBiblioteca, GestorReproduccion | ✅ Completa (10 tests) |
-| Presentación | Ventana principal en Tkinter | ✅ Completa, probada de punta a punta con música real |
-| Despliegue | Primer push a GitHub, empaquetado multiplataforma | ⬜ Pendiente |
+| Presentación | Interfaz hecha en HTML, CSS y JS | ✅ Completa, probada de punta a punta con música real |
+| Despliegue | Primer push a GitHub, empaquetado multiplataforma |✅ Completa |
 
 Total: 41 pruebas automatizadas, todas pasando.
 
 ## Decisiones de arquitectura y por qué
 
 - **Arquitectura en capas** (presentación, aplicación, dominio, infraestructura, recursos externos): separa la interfaz de la lógica de negocio y de las estructuras de datos. Facilita explicar el proyecto en la sustentación y facilita las pruebas, porque cada capa se puede probar por separado.
-- **Python + Tkinter + pygame-ce**: ambas librerías son multiplataforma sin instalaciones extra (Tkinter viene con la instalación estándar de Python). Esto resolvió directamente el requisito de "funciona igual en Linux y Windows".
+- **Python + pygame-ce**: ambas librerías son multiplataforma sin instalaciones extra. Esto resolvió directamente el requisito de "funciona igual en Linux y Windows".
 - **Estructuras de datos elegidas para que cada una tenga una razón funcional real**, no forzada:
 
 | Estructura | Módulo que representa | Por qué esa estructura |
@@ -35,7 +39,7 @@ Total: 41 pruebas automatizadas, todas pasando.
 ## Conceptos nuevos que aprendí en el camino
 
 **Entorno virtual (venv):** una copia aislada de Python solo para este proyecto, con sus propios paquetes. Evita que las dependencias de un proyecto choquen con las de otro o con el Python del sistema.
-- Crear: `python -m venv .venv` — Activar: `source .venv/bin/activate` (se nota porque el prompt empieza con `(.venv)`)
+- Crear: `python -m venv .venv` — Activar: `source .venv/bin/activate`.
 
 **pytest:** framework para escribir pruebas automáticas. Cada test es una pregunta puntual al código con una respuesta ya conocida. Patrón usado en cada test: preparar datos → ejecutar la operación → verificar con `assert`.
 - Correr con `python -m pytest`. Los archivos deben empezar exactamente con `test_` o pytest no los detecta.
@@ -48,11 +52,8 @@ Total: 41 pruebas automatizadas, todas pasando.
 
 **mutagen:** librería para leer metadatos (título, artista, duración) directo de un archivo de audio, sin tener que abrirlo manualmente.
 
-**Tkinter:** librería de interfaz gráfica incluida con Python. Funciona con *widgets* organizados en contenedores, y es dirigida por eventos — se registran funciones que Tkinter ejecuta cuando el usuario hace algo (clic, tecla), en vez de un flujo secuencial. `mainloop()` es el bucle que mantiene la ventana abierta.
-
 **pygame-ce:** módulo de audio (fork de pygame). Se usa `pygame.mixer` para reproducir sonido, algo que Tkinter no sabe hacer por sí solo.
 
-**Herramientas de diseño (Figma/Whimsical/Canva) vs. código:** producen una imagen/mockup de cómo se ve la interfaz, no código que se "inserte" en la app. Para Tkinter, el diseño se traduce a mano (colores, posiciones, tipografía) a las constantes y widgets de Python. El botón "exportar código" de Figma genera CSS/React, que no sirve para una app de escritorio en Tkinter.
 
 ## Problemas que me encontré y cómo se resolvieron
 
@@ -73,7 +74,68 @@ Total: 41 pruebas automatizadas, todas pasando.
 7. `git init`, primer commit, conectar el repositorio remoto, push.
 8. Documentar decisiones y problemas en una bitácora como esta, a medida que van apareciendo — no de memoria al final.
 
-## Próximos pasos
+## Para la instalación copie estos comandos y siga estos pasos en su terminal de comandos
 
-- [ ] Primer push a GitHub
-- [ ] Empaquetado multiplataforma (PyInstaller + GitHub Actions para generar el `.exe` de Windows)
+### Windows
+
+1. Ve a [Releases](https://github.com/emanuup/Nuelify/releases) y descarga `nuelify-windows.zip`.
+2. Descomprímelo y abre `nuelify.exe`.
+3. Si Windows avisa "protegió su PC": **Más información** → **Ejecutar de todas formas**.
+
+### Linux
+
+Necesitas Python 3.10 o más nuevo y git.
+Ubuntu / Debian:
+
+```bash
+sudo apt install git python3-venv libxcb-cursor0
+```
+
+Arch / CachyOS:
+
+```bash
+sudo pacman -S git python
+```
+
+Luego, copia y pega todo:
+
+```bash
+git clone https://github.com/emanuup/Nuelify.git
+cd Nuelify
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python main.py
+```
+
+La primera instalación descarga bastante (incluye Qt).
+
+Para volver a abrirlo otro día:
+
+```bash
+cd Nuelify
+source .venv/bin/activate
+python main.py
+```
+
+**Opcional: que aparezca en el lanzador de aplicaciones.** Con el proyecto instalado, estando dentro de la carpeta `Nuelify`:
+
+```bash
+mkdir -p ~/.local/share/applications
+cat > ~/.local/share/applications/nuelify.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Name=Nuelify
+Exec=$PWD/.venv/bin/python $PWD/main.py
+Path=$PWD
+Terminal=false
+Categories=AudioVideo;Audio;Player;
+EOF
+```
+
+## Uso
+
+1. Pulsa **Navegar** y elige una carpeta con música.
+2. Doble clic en una canción para reproducirla.
+3. Si una canción no trae carátula, pon un `cover.jpg` en su carpeta.
+
